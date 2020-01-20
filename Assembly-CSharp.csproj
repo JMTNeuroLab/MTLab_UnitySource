@@ -62,6 +62,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\DebugRun.cs" />
+    <Compile Include="Assets\DistractorOnset.cs" />
     <Compile Include="Assets\LSL4Unity\Demos\CubeRotation.cs" />
     <Compile Include="Assets\LSL4Unity\Demos\LSLTransformDemoOutlet.cs" />
     <Compile Include="Assets\LSL4Unity\Demos\RandomMarker.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="Assets\LSL4Unity\Scripts\LSLTransformOutlet.cs" />
     <Compile Include="Assets\LSL4Unity\Scripts\Resolver.cs" />
     <Compile Include="Assets\LSL4Unity\Scripts\ScriptOrder.cs" />
+    <Compile Include="Assets\ResponseOnset.cs" />
     <Compile Include="Assets\Scripts\DataStructs\FrameData.cs" />
     <Compile Include="Assets\Scripts\DataStructs\TrialData.cs" />
     <Compile Include="Assets\Scripts\Events\EventsController.cs" />
@@ -116,6 +119,9 @@
     <Compile Include="Assets\Tasks\SampleTask\SampleTaskExpController.cs" />
     <Compile Include="Assets\Tasks\SampleTask\SampleTaskTaskInfo.cs" />
     <Compile Include="Assets\Tasks\SampleTask\SampleTaskTaskInfoInspector.cs" />
+    <Compile Include="Assets\Tasks\XMazeTask\XMaze_ExperimentCtrl.cs" />
+    <Compile Include="Assets\Tasks\XMazeTask\XMaze_ForceFOV.cs" />
+    <Compile Include="Assets\Tasks\XMazeTask\XMaze_TaskInfo.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/MT_Lab/Recording_setup_update/Unity3D/Dev/ML_Clean/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

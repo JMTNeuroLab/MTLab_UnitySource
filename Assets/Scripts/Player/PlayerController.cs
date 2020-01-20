@@ -22,7 +22,9 @@ namespace FirstPerson
         private float m_StickToGroundForce = 10.0f;
         private float m_GravityMultiplier = 2.0f;
         private Vector3 m_MoveDirection = Vector3.zero;
-        private bool m_CanMove = true;
+        private bool m_CanMove = true; // All Movements
+        private bool m_CanTurn = true; // Rotation only
+        private bool m_CanBack = true; // Backwards movement
         private bool m_PreviouslyGrounded;
 
         private float speed;
@@ -48,7 +50,7 @@ namespace FirstPerson
         private float _CollisionStatus = -1;
         
         // Use this for initialization
-        private void Start()
+        private void OnEnable()
         {
             m_CharacterController = GetComponent<CharacterController>();
             m_Camera = Camera.main;
@@ -79,8 +81,14 @@ namespace FirstPerson
                 {
                     // Read input
                     //_vInput = Input.GetAxis(inputCtrl.InputV);
-
-                    m_MoveDirection = new Vector3(0, 0, move.y);
+                    if (!m_CanBack && move.y < 0)
+                    {
+                        m_MoveDirection = new Vector3(0, 0, 0);
+                    }
+                    else
+                    {
+                        m_MoveDirection = new Vector3(0, 0, move.y);
+                    }
                     m_MoveDirection = transform.TransformDirection(m_MoveDirection);
                     m_MoveDirection *= m_WalkSpeed;
 
@@ -98,11 +106,12 @@ namespace FirstPerson
                 // Copied from MouseLook.LookRotation
                 // No pitch rotation either. 
                 //_hInput = Input.GetAxis(inputCtrl.InputH);
-                
-                transform.localRotation *= Quaternion.Euler(0f, move.x * inputCtrl.Turn_Sensitivity, 0f);
+                if (m_CanTurn)
+                    transform.localRotation *= Quaternion.Euler(0f, move.x * inputCtrl.Turn_Sensitivity, 0f);
             }
             // Update values to experiment controller
-            EventsController.instance.SendPlayerLateUpdateEvent(transform.position, transform.rotation.eulerAngles.y, _CollisionStatus, move.y, move.x);
+            if (EventsController.instance != null)
+                EventsController.instance.SendPlayerLateUpdateEvent(transform.position, transform.rotation.eulerAngles.y, _CollisionStatus, move.y, move.x);
         }
 
         public void ToStart(Vector3 position, Quaternion rotation)
@@ -170,5 +179,15 @@ namespace FirstPerson
         {
             m_CanMove = !OnOff;
         }
+        public void FreezeRotation(bool OnOff)
+        {
+            m_CanTurn = !OnOff;
+        }
+        public void ConstrainForward(bool OnOff)
+        {
+            m_CanBack = !OnOff;
+        }
+
+
     }
 }
