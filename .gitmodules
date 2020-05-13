@@ -4,3 +4,6 @@
 [submodule "Wiki"]
 	path = Wiki
 	url = https://github.com/doug1983/MTLab_UnitySource.wiki.git
+[submodule "Assets/liblsl-Csharp"]
+	path = Assets/liblsl-Csharp
+	url = https://github.com/labstreaminglayer/liblsl-Csharp.git
