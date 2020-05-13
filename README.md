@@ -14,7 +14,7 @@ This project was originally built by [Guillaume Doucet](https://www.github.com/D
 * Lab Streaming Layer: 
     * [Binaries v. 1.13.1](https://github.com/sccn/liblsl/releases/tag/1.13.1) 
     * [LSL for Matlab](https://github.com/labstreaminglayer/liblsl-Matlab/releases/tag/1.13.0-b13-matlab2019b)
-* [Customized EyeLink SDK](https://drive.google.com/drive/folders/1ggGMG3ZsGim3Runcfe7JXZoaC2rzDwap)
+* [Customized EyeLink SDK](https://github.com/JMTNeuroLab/EyeLink_SDK_for_Unity)
 
 **MonkeyLogic2 resources** <br>  
 * [NIMH MonkeyLogic2](https://monkeylogic.nimh.nih.gov/download.html)
@@ -27,38 +27,8 @@ This project was originally built by [Guillaume Doucet](https://www.github.com/D
 
 
 ## Installation
+Refer to the [wiki page](https://github.com/JMTNeuroLab/MTLab_UnitySource/wiki/1.-Installation) for complete details. 
 
-### MonkeyLogic2
-* Download MonkeyLogic2 zip folder: https://monkeylogic.nimh.nih.gov/download.html
-* Extract to `C:\MonkeyLogic\`
-
-#### Install customized MonkeyLogic2 task
-* Navigate to `task` folder in your MonkeyLogic install
-  `$ cd /c/MonkeyLogic/task/`
-* Clone Unity task for MonkeyLogic2
-  `$ git clone --recurse-submodules https://github.com/JMTNeuroLab/MTLab_ML_UnityTask.git `
-
-### Unity
-
-#### Clone Unity-MonkeyLogic2 source repository from GitHub
-* Sign into GitHub, and fork this repository
-* Create a folder on your computer to host your local copy of the repository
-  `$ cd </desired/path/>`
-* Clone repository
-  `$ git clone --recurse-submodules https://github.com/<yourGitHubUserName>/MTLab_UnitySource.git .`
-
-### EyeLink
-
-#### Install the EyeLink SDK
-* From the EyeLink SDK folder, run the EyeLink SDK installer (.exe)
-	* Choose "Typical" installation when prompted
-* Extract `mousesimulator_mar25_2019.zip`
-* Run the mouse simulator. Approve the necessary permission requests. 
-> **Do not download the latest SDK from the EyeLink support forums**.
-> 
-> The EyeLink SDK included in this repository was modified by Guillaume Doucet and contains functions not available in the one provided by SR Research.
->      
-> It also uses a specific DLL file that is provided by SR-Research without the source code. This file is included in this repository: `Unity-MonkeyLogic2_source\Assets\Scripts\EyeLink\DLLs\interop.SREYELINKLib.dll`.
 
 ## Getting started
 
