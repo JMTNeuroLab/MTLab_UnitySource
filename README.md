@@ -13,7 +13,7 @@ This project was originally built by [Guillaume Doucet](https://www.github.com/D
 * [Unity](https://unity3d.com/get-unity/download), one of the tested versions: 2019.3.0b3, 2019.3.0f6. 
 * Lab Streaming Layer: 
     * [Binaries v. 1.13.1](https://github.com/sccn/liblsl/releases/tag/1.13.1) 
-    * [LSL for Matlab](https://github.com/labstreaminglayer/liblsl-Matlab/releases/tag/1.13.0-b13-matlab2019b)
+    * [LSL for Matlab](https://github.com/labstreaminglayer/liblsl-Matlab/releases/tag/1.13.0-b13-matlab2019b) (These files are already included in the MTLab_ML_UnityTask repository)
 * [Customized EyeLink SDK](https://github.com/JMTNeuroLab/EyeLink_SDK_for_Unity)
 
 While this is not required, Unity uses the C# language which has very good integration with [Microsoft Visual Studio](https://visualstudio.microsoft.com/). Just make sure you install the **Game development with Unity** package when you install it. This will allow you to have code completion and debugger access. If you already have Visual Studio but want to add the game development package, open Visual Studio, got to: `Tools/Get Tools and Features...` and install the package from there. 
