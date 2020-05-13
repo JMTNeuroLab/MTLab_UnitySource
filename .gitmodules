@@ -1,9 +1,6 @@
 [submodule "Assets/Tasks"]
 	path = Assets/Tasks
 	url = https://github.com/JMTNeuroLab/MTLab_UnityExampleTask.git
-[submodule "Wiki"]
-	path = Wiki
-	url = https://github.com/Doug1983/MTLab_UnitySource.wiki.git
 [submodule "Assets/liblsl-Csharp"]
 	path = Assets/liblsl-Csharp
 	url = https://github.com/labstreaminglayer/liblsl-Csharp.git
