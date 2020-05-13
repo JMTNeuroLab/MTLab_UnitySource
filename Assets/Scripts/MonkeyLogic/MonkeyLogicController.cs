@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.LSL4Unity.Scripts;
 using LSL;
 using Misc;
 

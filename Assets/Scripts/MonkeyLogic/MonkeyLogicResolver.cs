@@ -8,7 +8,7 @@ using UnityEngine;
 using System.Linq;
 using LSL;
 using UnityEngine.EventSystems;
-using Assets.LSL4Unity.Scripts;
+
 /// <summary>
 /// Encapsulates the lookup logic for LSL streams with an event based appraoch
 /// your custom stream inlet implementations could be subscribed to the On
