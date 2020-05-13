@@ -35,8 +35,13 @@ Refer to the [wiki page](https://github.com/JMTNeuroLab/MTLab_UnitySource/wiki/1
 
 ## Getting started
 
-To test that your installation is working, you can try to run a copy of the associative memory task used in [Gulli <em>et al.</em> 2020, <em>Nature Neuroscience</em>](https://www.nature.com/articles/s41593-019-0548-3). This task is built in a virtual environment called the X-Maze. 
-> Note, this is not an exact copy of the task used in that article. The published version relies on a now-deprecated version of Unreal Engine. 
+To test that your installation is working, you can try to run a copy of the associative memory task used in:
+* [Gulli <em>et al.</em> 2020, <em>Nature Neuroscience</em>](https://www.nature.com/articles/s41593-019-0548-3).
+* [Doucet <em>et al.</em> 2019, <em>Hippocampus</em>](https://onlinelibrary.wiley.com/doi/10.1002/hipo.23140).
+* [Corrigan <em>et al.</em> 2017, <em>Journal of Vision</em>](http://jov.arvojournals.org/article.aspx?articleid=2659575).
+
+This task is built in a virtual environment called the X-Maze. 
+> Note, this is not an exact copy of the task used in these articles. The published version relies on a now-deprecated version of Unreal Engine. The task was re-created exactly using the Unity engine. 
 
 ### Download the X-Maze task
 * In a terminal window, navigate to the Tasks folder of your local MonkeyLogic-Unity Source repo
