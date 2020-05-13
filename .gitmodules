@@ -1,9 +1,9 @@
-[submodule "LSL4Unity"]
-	path = Assets/LSL4Unity
-	url = https://github.com/xfleckx/LSL4Unity.git
 [submodule "Assets/Tasks"]
 	path = Assets/Tasks
 	url = https://github.com/Doug1983/MTLab_UnityExampleTask.git
 [submodule "Wiki"]
 	path = Wiki
 	url = https://github.com/doug1983/MTLab_UnitySource.wiki.git
+[submodule "Assets/liblsl-Csharp"]
+	path = Assets/liblsl-Csharp
+	url = https://github.com/labstreaminglayer/liblsl-Csharp.git
