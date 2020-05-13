@@ -43,15 +43,12 @@ To test that your installation is working, you can try to run a copy of the asso
 This task is built in a virtual environment called the X-Maze. 
 > Note, this is not an exact copy of the task used in these articles. The published version relies on a now-deprecated version of Unreal Engine. The task was re-created exactly using the Unity engine. 
 
-### Download the X-Maze task
-* In a terminal window, navigate to the Tasks folder of your local MonkeyLogic-Unity Source repo
-  `$ cd <yourLocalSourceRepoPath>/Assets/Tasks/`
-* Clone the example task repo called `Temp` to this folder 
-  `$ git clone https://github.com/Doug1983/MTLab_UnityExampleTask.git`
-* Move all of the files now in `<yourLocalSourceRepoPath>/Assets/Tasks/MTLab_UnityExampleTask/` to `<yourLocalSourceRepoPath>/Assets/Tasks/`
+
+### Running the task
+#### Unity
 * In Unity Hub, add your local repository as a new project. 
 * Open the project using Unity v2019.3.0**
-     * If you're having trouble opening Unity, check out the [Wiki section on Troubleshooting](https://github.com/Doug1983/MTLab_UnitySource/wiki/5.-Misc-and-Troubleshooting).
+     * If you're having trouble opening Unity, check out the [Wiki section on Troubleshooting](https://github.com/JMTNeuroLab/MTLab_UnitySource/wiki/5.-Misc-and-Troubleshooting).
 
 > Note, you may get a pop-up asking: 
 >> 
@@ -61,11 +58,9 @@ This task is built in a virtual environment called the X-Maze.
 >> 
 > Select "No". 
 
-### Running the task
-#### Unity
- * Launch Unity-MonkeyLogic2 project
- * Load the X-Maze End scene
- * Ensure that there are no errors in the console
+ * Launch your `UnityVR` project.
+ * Load the `XMaze_End` scene.
+ * Ensure that there are no errors in the console.
  * Hit "Play" (ctrl+P)
 
 #### MonkeyLogic2 
@@ -75,3 +70,5 @@ This task is built in a virtual environment called the X-Maze.
   > Note, on first call, you may need to approve some permissions requests. 
 * In the MonkeyLogic2 dialog box, load `C:\MonkeyLogic\task\UnityVR.txt`
 * Hit &#x2622;**RUN**
+
+If you run into issues with the EyeLink tracker or mouse simulation, check out the [Troubleshooting](https://github.com/JMTNeuroLab/MTLab_UnitySource/wiki/5.-Misc-and-Troubleshooting) section. 
