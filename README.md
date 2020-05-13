@@ -16,6 +16,9 @@ This project was originally built by [Guillaume Doucet](https://www.github.com/D
     * [LSL for Matlab](https://github.com/labstreaminglayer/liblsl-Matlab/releases/tag/1.13.0-b13-matlab2019b)
 * [Customized EyeLink SDK](https://github.com/JMTNeuroLab/EyeLink_SDK_for_Unity)
 
+While this is not required, Unity uses the C# language which has very good integration with [Microsoft Visual Studio](https://visualstudio.microsoft.com/). Just make sure you install the **Game development with Unity** package when you install it. This will allow you to have code completion and debugger access. If you already have Visual Studio but want to add the game development package, open Visual Studio, got to: `Tools/Get Tools and Features...` and install the package from there. 
+
+
 **MonkeyLogic2 resources** <br>  
 * [NIMH MonkeyLogic2](https://monkeylogic.nimh.nih.gov/download.html)
 * [Customisted task for MonkeyLogic2](https://github.com/JMTNeuroLab/MTLab_ML_UnityTask.git)
