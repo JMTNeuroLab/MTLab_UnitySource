@@ -138,9 +138,12 @@ namespace FirstPerson
             _CollisionStatus = -1;
         }
        
-        private void OnControllerColliderHit(ControllerColliderHit hit)
-        {
-           /* Rigidbody body = hit.collider.attachedRigidbody;
+        
+        //private void OnControllerColliderHit(ControllerColliderHit hit)
+        //{
+        //    Debug.Log(hit.collider.gameObject);
+            /*
+            Rigidbody body = hit.collider.attachedRigidbody;
             //dont move the rigidbody if the character is on top of it
             if (m_CollisionFlags == CollisionFlags.Below)
             {
@@ -151,8 +154,9 @@ namespace FirstPerson
             {
                 return;
             }
-            body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);*/
-        }
+            body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+            */
+        //}
         
         // For ITI, Pause and before the experiment starts. 
         public void OnBlack(bool OnOff)
