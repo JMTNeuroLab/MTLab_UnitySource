@@ -32,6 +32,8 @@ public abstract class ExperimentController : MonoBehaviour
 
     // Load the current experiment configuration, and generate trials. 
     #region ExperimentConfig
+    [Tooltip("Run task without MonkeyLogic.")]public bool DebugMode = false; 
+
     // Controllers
     public FirstPerson.PlayerController playerController;
 
@@ -303,7 +305,9 @@ public abstract class ExperimentController : MonoBehaviour
         playerController.OnBlack(true);
 
         PrepareAllTrials();
-        
+
+        if (DebugMode)
+            StartExperiment();
     }
 
     // Generate dictionary mapping object name to instance ID

@@ -81,8 +81,6 @@ public class EventsController : MonoBehaviour
         OnPlaybackStart?.Invoke();
     }
 
-
-
     public delegate void Begin();
     public static event Begin OnBegin;
     public void SendBegin()
