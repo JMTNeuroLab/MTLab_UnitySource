@@ -119,6 +119,13 @@ namespace FirstPerson
             transform.SetPositionAndRotation(position, rotation);
         }
 
+        public void ToStart(Vector3 position, Vector3 rotation)
+        {
+            Quaternion tmp_rotation = Quaternion.identity;
+            tmp_rotation.eulerAngles = rotation; 
+            transform.SetPositionAndRotation(position, tmp_rotation);
+        }
+
         // This is to clear the value at the end of the trial as hiding/disabling the trigger
         // volumes does not call a trigger exit. 
         public void ClearCollisionStatus()

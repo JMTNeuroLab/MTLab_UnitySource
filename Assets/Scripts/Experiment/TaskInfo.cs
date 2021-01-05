@@ -48,11 +48,12 @@ public abstract class TaskInfo : MonoBehaviour
     public GameObject[] TargetOnsetTriggers;
     public GameObject[] TargetObjects;
     public GameObject[] DistractorObjects;
-
-    public int NTargets = 1;
-    [Tooltip("Set to 0 to not use Distractors")]public int NDistractors = 1; 
         
     public GameObject[] PossiblePositions;
+
+    public int NTargets = 1;
+    [Tooltip("Set to 0 to not use Distractors")] public int NDistractors = 1;
+    [Tooltip("If multiple targets need to be collected to complete trials.")] public bool MultipleTargets;
 
     [Header("Conditions")]
     public Condition[] Conditions;

@@ -179,6 +179,7 @@ public abstract class ExperimentController : MonoBehaviour
                                             {
                                                 Trial_Number = 0,
                                                 Start_Position = taskInfo.StartPositions[start_index].transform.position,
+                                                Start_Rotation = taskInfo.StartPositions[start_index].transform.rotation.eulerAngles,
                                                 // Fix point
                                                 Fix_Object = fixObject,
                                                 // Subracting the camera position to get the fixation point local space (i.e. child of camera)
@@ -195,6 +196,8 @@ public abstract class ExperimentController : MonoBehaviour
                                                 Target_Objects = targs,
                                                 Target_Materials = targ_mat,
                                                 Target_Positions = targ_pos.ToArray(),
+                                                MultipleTargets = taskInfo.MultipleTargets,
+
                                                 //Distractors
                                                 Distractor_Objects = dists,
                                                 Distractor_Materials = dist_mat,
@@ -410,9 +413,10 @@ public abstract class ExperimentController : MonoBehaviour
     protected float _pauseStateTimer = Mathf.Infinity;
     protected int _trialNumber = 0;
     protected int _previousTrialError = 0; // 0:hit, 1: error, 2: ignored. 
+    protected bool[] _trialTargetHits; // keeps track of all targets hit for multiple targets levels. 
 
-    // Start Trial will be called after the ITI
-    public virtual void PrepareTrial()
+// Start Trial will be called after the ITI
+public virtual void PrepareTrial()
     {
         // get current trial
         _currentTrial = _allTrials[_trialNumber];
@@ -433,7 +437,7 @@ public abstract class ExperimentController : MonoBehaviour
         //teleport player to the start position
         if (!taskInfo.ContinuousTrials)
         {
-            playerController.ToStart(_currentTrial.Start_Position, Quaternion.identity);
+            playerController.ToStart(_currentTrial.Start_Position, _currentTrial.Start_Rotation);
         }
 
         // Sanity checks
@@ -518,7 +522,10 @@ public abstract class ExperimentController : MonoBehaviour
         int mat_idx;
         int pos_idx;
 
-        for(int ii = 0; ii < _currentTrial.Target_Objects.Length; ii++)
+        // create array to keep track of hit targets
+        _trialTargetHits = new bool[_currentTrial.Target_Objects.Length];
+
+        for (int ii = 0; ii < _currentTrial.Target_Objects.Length; ii++)
         {
             mat_idx = Mathf.Min(_currentTrial.Target_Materials.Length-1, ii);
             pos_idx = Mathf.Min(_currentTrial.Target_Positions.Length-1, ii);
@@ -527,6 +534,9 @@ public abstract class ExperimentController : MonoBehaviour
             _currentTrial.Target_Objects[ii].GetComponent<MeshRenderer>().material = _currentTrial.Target_Materials[mat_idx];
             _currentTrial.Target_Objects[ii].GetComponent<Collider>().enabled = false;
             _currentTrial.Target_Objects[ii].GetComponent<Renderer>().enabled = false;
+
+            // clear the _trialTargetHits
+            _trialTargetHits[ii] = false; 
         }
     }
     
@@ -627,15 +637,23 @@ public abstract class ExperimentController : MonoBehaviour
     {
         bool targ = false;
         bool dist = false;
+
         // check if target or distractor
         if (_trialTimer != Mathf.Infinity)
         {
-            foreach (GameObject go in _currentTrial.Target_Objects)
+            for (int i = 0; i < _currentTrial.Target_Objects.Length; i++)
             {
-                if ((int)_frameData.Player_State == go.GetInstanceID())
+                if ((int)_frameData.Player_State == _currentTrial.Target_Objects[i].GetInstanceID())
                 {
-                    targ = true;
+                    _trialTargetHits[i] = true;
+                    // need to hide the target that was hit
+                    _currentTrial.Target_Objects[i].GetComponent<Renderer>().enabled = false;
+                    _currentTrial.Target_Objects[i].GetComponent<Collider>().enabled = false;
                 }
+            }
+            if( (_currentTrial.MultipleTargets && _trialTargetHits.All(x => x)) || (!_currentTrial.MultipleTargets && _trialTargetHits.Any(x => x)) )
+            {
+                targ = true;
             }
 
             foreach (GameObject go in _currentTrial.Distractor_Objects)
@@ -644,7 +662,6 @@ public abstract class ExperimentController : MonoBehaviour
                 {
                     dist = true;
                 }
-
             }
 
             if (ResponseOK && targ)

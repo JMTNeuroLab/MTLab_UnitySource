@@ -6,6 +6,7 @@ public class TrialData
 {
     public int Trial_Number;
     public Vector3 Start_Position;
+    public Vector3 Start_Rotation; 
 
     public GameObject Fix_Object;
     public Vector3 Fix_Position_World;
@@ -16,7 +17,9 @@ public class TrialData
     public GameObject[] Cue_Objects;
     
     public Material Cue_Material;
-    
+
+    public bool MultipleTargets;
+
     public GameObject[] Target_Objects;
 
     public Material[] Target_Materials;

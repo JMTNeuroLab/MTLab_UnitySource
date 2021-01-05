@@ -30,7 +30,9 @@ public class UserInputController : MonoBehaviour
         {
             case EDevice.Joystick:
                 if (Joystick.current != null)
+                {
                     axes = Joystick.current.stick.ReadValue();
+                }
                 else
                     axes = Vector2.zero;
                 break;
