@@ -155,7 +155,7 @@ public class EyeLinkController : MonoBehaviour
         if (!el.isConnected() && !checker.RunCheck() && !checker.CheckELOnline() && eyecal.has_calibration)
         {
             // Configure eye
-            switch (eyecal.GetTrackedEye())
+            switch (eyecal.GetEyeLinkTrackedEye())
             {
                 case 0:
                     el_Eye = EL_EYE.EL_LEFT;
@@ -221,7 +221,7 @@ public class EyeLinkController : MonoBehaviour
                 _eyeRaw.x = s.get_px(el_Eye);
                 _eyeRaw.y = s.get_py(el_Eye);
 
-                eyecal.RawToPix(_eyeRaw, out _eyeDeg, out _eyePix);
+                eyecal.EL_RawToPix(_eyeRaw, out _eyeDeg, out _eyePix);
                 
                 gazeProcess.ProcessGaze(_eyePix, out float[] gazeTargets, out float[] gazeCounts, out Vector3[] hitPoints);
                 gazeView.ShowGaze(hitPoints);

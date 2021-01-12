@@ -27,9 +27,32 @@ public class EyeCalibration : MonoBehaviour
         _has_calibration = true;
     }
 
+    // The calibration is handled in the Tobii Tracker Manager so we are not relying on data
+    // received from Monkeylogic. We simply convert the calibrated data in a normalized Active 
+    // Display Coordinate System (ADCS) from 0 -> 1 starting at the Top-Left towards Botton-Right.
+    // Unity starts at the Bottom-Left towards Top-Right. 
+    public Vector2 T_ADCSToPix(Vector2 in_eye)
+    {
+        // Pixel values are within unity only. Unity origin (0,0) is the bottom-left. 
+        // We also scale the value if the Unity resolution differs than the MonkeyLogic one. 
+        Vector2 eye_pix = new Vector2
+        {
+            x = in_eye.x * (_x_res / _eyecal_params.ml_x_res) * _x_res,
+            y = (1.0f - in_eye.y) * (_y_res / _eyecal_params.ml_y_res) * _y_res
+        };
+        
+        // prevent values from falling outside of screen
+        if (eye_pix.x < 0 || eye_pix.x > _x_res)
+            eye_pix.x = -1;
+        if (eye_pix.y < 0 || eye_pix.y > _y_res)
+            eye_pix.y = -1;
+
+        return eye_pix;
+    }
+
     // will receive raw Int values from the eyelink and return calibrated pixel 
     // position on screen. 
-    public void RawToPix(Vector3 in_eye, out Vector2 eye_deg, out Vector2 eye_pix)
+    public void EL_RawToPix(Vector3 in_eye, out Vector2 eye_deg, out Vector2 eye_pix)
     {
         // From MonkeyLogic, 
         // First step: 
@@ -91,7 +114,7 @@ public class EyeCalibration : MonoBehaviour
         return _eyecal_params.el_IP;
     }
 
-    public int GetTrackedEye()
+    public int GetEyeLinkTrackedEye()
     {
         // 0: Left; 1: Right;
         return _eyecal_params.el_eyeID;

@@ -5,9 +5,11 @@ using UnityEditor;
 
 public class GazeProcessing : MonoBehaviour
 {
-    // We only need the pixels per degrees to convert the ~2DVA foveation windon
+    // As the EyeLink (Pixels) and Tobii (Normalized view space) operate on different
+    // space coordinates, we need to normalize convert Tobii to pixels. 
+    
+    // We only need the pixels per degrees to convert the ~2DVA foveation window
     // to pixels. 
-    private Vector2 _gaze;
     private float _pix_per_deg = 0.0f;
     private float _foveation_radius_deg = 2.0f; // In DVA
     private float _foveation_radius_pix_x; // in pixels

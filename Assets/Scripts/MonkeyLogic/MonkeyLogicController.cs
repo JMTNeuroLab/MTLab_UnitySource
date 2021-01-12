@@ -59,7 +59,7 @@ public class MonkeyLogicController : MonoBehaviour
 
         // Create stream descriptors
         outlets = gameObject.AddComponent<MonkeyLogicOutlet>();
-        
+
         // These need to be MonoBehavior so leave unchanged
         _resolver = gameObject.AddComponent<MonkeyLogicResolver>();
         inlet = gameObject.AddComponent<MonkeyLogicInlet>();
@@ -90,24 +90,26 @@ public class MonkeyLogicController : MonoBehaviour
         EventsController.OnPublishFrame += PublishFrame;
         EventsController.OnPublishTrial += PublishTrial;
 
-}
+    }
     private IDictionary<string, IDictionary<string, int>> GenerateXMLMetaData()
     {
+        IDictionary<string, IDictionary<string, int>> metadata_dicts_names = new Dictionary<string, IDictionary<string, int>>();
 
-        // Get Name - InstanceID dict from Experiment Controller
-        IDictionary<string, int> obj_map = ExperimentController.instance.InstanceIDMap;
-        IDictionary<string, int> phase_map = new Dictionary<string, int>();
-        foreach (var test in Enum.GetValues(typeof(StateNames)))
+        if (ExperimentController.instance)
         {
-            phase_map.Add(test.ToString(), (int)test);
-        }
-
-        IDictionary<string, IDictionary<string, int>> metadata_dicts_names = new Dictionary<string, IDictionary<string, int>>()
+            // Get Name - InstanceID dict from Experiment Controller
+            IDictionary<string, int> obj_map = ExperimentController.instance.InstanceIDMap;
+            IDictionary<string, int> phase_map = new Dictionary<string, int>();
+            foreach (var test in Enum.GetValues(typeof(StateNames)))
             {
-                { "phase_map", phase_map },
-                { "obj_map", obj_map }
-            };
+                phase_map.Add(test.ToString(), (int)test);
+            }
 
+            metadata_dicts_names.Add("phase_map", phase_map);
+            metadata_dicts_names.Add("obj_map", obj_map);
+
+
+        }
         return metadata_dicts_names;
     }
 
@@ -151,5 +153,24 @@ public class MonkeyLogicController : MonoBehaviour
     public void PublishTrial(string to_publish)
     {
         outlets.Write(trialOutlet, to_publish);
+    }
+
+    // To add outlets controlled by other classes
+    public int AddExternalOutlet(string name, string type, int chan_count, double rate,
+                                 string unique_id,
+                                 liblsl.channel_format_t format = liblsl.channel_format_t.cf_double64,
+                                 IDictionary<string, IDictionary<string, int>> metadata_dicts_names = null)
+    { 
+        if (metadata_dicts_names == null)
+            metadata_dicts_names = new Dictionary<string, IDictionary<string, int>>();
+
+        int outlet_id = outlets.Configure(name, type, chan_count, rate, format, unique_id, metadata_dicts_names);
+
+        return outlet_id;
+    }
+
+    public void PublishExternal(int outlet_id, double[] to_publish)
+    {
+        outlets.Write(outlet_id, to_publish);
     }
 }
