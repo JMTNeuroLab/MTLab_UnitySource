@@ -160,16 +160,28 @@ public class MonkeyLogicController : MonoBehaviour
                                  string unique_id,
                                  liblsl.channel_format_t format = liblsl.channel_format_t.cf_double64,
                                  IDictionary<string, IDictionary<string, int>> metadata_dicts_names = null)
-    { 
-        if (metadata_dicts_names == null)
-            metadata_dicts_names = new Dictionary<string, IDictionary<string, int>>();
+    {
+        if (outlets)
+        {
+            if (metadata_dicts_names == null)
+            {
+                metadata_dicts_names = new Dictionary<string, IDictionary<string, int>>();
+            }
 
-        int outlet_id = outlets.Configure(name, type, chan_count, rate, format, unique_id, metadata_dicts_names);
+            int outlet_id = outlets.Configure(name, type, chan_count, rate, format, unique_id, metadata_dicts_names);
 
-        return outlet_id;
+            return outlet_id;
+        }
+        else
+            return -1; 
     }
 
     public void PublishExternal(int outlet_id, double[] to_publish)
+    {
+        outlets.Write(outlet_id, to_publish);
+    }
+
+    public void PublishExternal(int outlet_id, double[,] to_publish)
     {
         outlets.Write(outlet_id, to_publish);
     }

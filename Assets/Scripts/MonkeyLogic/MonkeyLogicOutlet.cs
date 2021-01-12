@@ -81,4 +81,13 @@ public class MonkeyLogicOutlet : MonoBehaviour
                 _outlets[outletID].push_sample(sample);
         }
     }
+    public void Write(int outletID, double[,] sample)
+    {
+        if (outletID < _outlets.Count)
+        {
+            if (_outlets[outletID] != null)
+                _outlets[outletID].push_chunk(sample);
+        }
+    }
+
 }

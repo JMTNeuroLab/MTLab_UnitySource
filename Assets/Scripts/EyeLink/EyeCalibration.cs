@@ -35,16 +35,17 @@ public class EyeCalibration : MonoBehaviour
     {
         // Pixel values are within unity only. Unity origin (0,0) is the bottom-left. 
         // We also scale the value if the Unity resolution differs than the MonkeyLogic one. 
+        
         Vector2 eye_pix = new Vector2
         {
             x = in_eye.x * (_x_res / _eyecal_params.ml_x_res) * _x_res,
             y = (1.0f - in_eye.y) * (_y_res / _eyecal_params.ml_y_res) * _y_res
         };
-        
+
         // prevent values from falling outside of screen
-        if (eye_pix.x < 0 || eye_pix.x > _x_res)
+        if (eye_pix.x < 0 || eye_pix.x > _x_res || float.IsNaN(eye_pix.x))
             eye_pix.x = -1;
-        if (eye_pix.y < 0 || eye_pix.y > _y_res)
+        if (eye_pix.y < 0 || eye_pix.y > _y_res || float.IsNaN(eye_pix.y))
             eye_pix.y = -1;
 
         return eye_pix;

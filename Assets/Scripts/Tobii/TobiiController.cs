@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Tobii.Research;
+using Tobii.Research.Unity;
 using LSL;
 
 // Notes: 
@@ -25,75 +26,17 @@ public class TobiiController : MonoBehaviour
     };
 
     public SamplingRates SR = SamplingRates._60;
-    public TrackedEye TrackEye = TrackedEye.Left;
-
-    // to keep the latest recorded sample in pixels
-    // ProcessGaze scripts work with pixels
-    private Vector2 _eyePix = new Vector2();
-    private Vector2 _eyeADCS = new Vector2();
 
     // We need the monkeylogic controller here to forward gaze data as soon as we have it
     // for MonkeyLogic to record it. 
     public MonkeyLogicController MLController;
     protected int mlOutletID = -1;
 
-    // Start is called before the first frame update
-    protected IEyeTracker tobiiTracker;
-    protected GazeOutputFrequencyCollection allRates;
-
     // Calibration script
-    private EyeCalibration eyecal;
-
-    // Gaze 
-    private GazeProcessing gazeProcess;
-    private GazeView gazeView;
-
     void Start()
     {
-        eyecal = gameObject.AddComponent<EyeCalibration>();
-        gazeProcess = gameObject.AddComponent<GazeProcessing>();
-        gazeView = gameObject.AddComponent<GazeView>();
-
-        // Add Listeners
-        EventsController.OnEyeCalibrationUpdate += gazeProcess.UpdateCalibration;
-        EventsController.OnEyeCalibrationUpdate += eyecal.UpdateCalibration;
-
-        if (FindTracker())
-            ConfigureOulet();
     }
 
-    private void OnDisable()
-    {
-        tobiiTracker.GazeDataReceived -= EyeTracker_GazeDataReceived;
-
-        EventsController.OnEyeCalibrationUpdate -= gazeProcess.UpdateCalibration;
-        EventsController.OnEyeCalibrationUpdate -= eyecal.UpdateCalibration;
-    }
-
-    private bool FindTracker()
-    {
-        // TODO: find by address? 
-        EyeTrackerCollection tmpTrackers = EyeTrackingOperations.FindAllEyeTrackers();
-        foreach (IEyeTracker item in tmpTrackers)
-        {
-            if (item.DeviceName == "Tobii Pro Fusion")
-            {
-                tobiiTracker = item;
-                if (tobiiTracker.GetAllGazeOutputFrequencies().Contains((float)SR))
-                {
-                    tobiiTracker.SetGazeOutputFrequency((float)SR);
-                }
-                else
-                {
-                    tobiiTracker.SetGazeOutputFrequency(60.0f);
-                    SR = SamplingRates._60;
-                }
-                tobiiTracker.GazeDataReceived += EyeTracker_GazeDataReceived;
-                return true; 
-            }
-        }
-        return false;
-    }
 
     private void ConfigureOulet()
     {
@@ -113,68 +56,52 @@ public class TobiiController : MonoBehaviour
         mlOutletID = MLController.AddExternalOutlet("TobiiGazeData", "TobiiGazeData", 10, liblsl.IRREGULAR_RATE, "tobii1214");
     }
 
-    private void EyeTracker_GazeDataReceived(object sender, GazeDataEventArgs e)
+    // Unity fixed update is by default @ 20 ms or 50 Hz. Since the tracker operates at either 60, 120 or 250 Hz,
+    // we would have at most 5 samples to process, which should not affect frame rates. Timing is somewhat reliable.
+    private void FixedUpdate()
     {
-        if (TrackEye == TrackedEye.Left)
+        if (EyeTracker.Instance.Connected && mlOutletID != -1)
         {
-            _eyeADCS = new Vector2
+            int n_samples = EyeTracker.Instance.GazeDataCount;
+            if (n_samples > 0)
             {
-                x = e.LeftEye.GazePoint.PositionOnDisplayArea.X,
-                y = e.LeftEye.GazePoint.PositionOnDisplayArea.Y
-            };
-        }
-        else
-        {
-            _eyeADCS = new Vector2
-            {
-                x = e.RightEye.GazePoint.PositionOnDisplayArea.X,
-                y = e.RightEye.GazePoint.PositionOnDisplayArea.Y
-            };
-        }
-        _eyePix = eyecal.T_ADCSToPix(_eyeADCS); 
+                // 
+                double[,] to_publish = new double[n_samples, 10];
+                for (int i = 0; i < n_samples; i++)
+                {
+                    IGazeData tmp = EyeTracker.Instance.NextData;
 
-        if (mlOutletID != -1 && MLController)
-        {
-            double[] to_publish = new double[10];
-            to_publish[0] = e.LeftEye.GazePoint.PositionOnDisplayArea.X;
-            to_publish[1] = e.LeftEye.GazePoint.PositionOnDisplayArea.Y;
-            to_publish[2] = e.LeftEye.Pupil.PupilDiameter;
-            to_publish[3] = (double)e.LeftEye.GazePoint.Validity;
-            to_publish[4] = e.RightEye.GazePoint.PositionOnDisplayArea.X;
-            to_publish[5] = e.RightEye.GazePoint.PositionOnDisplayArea.Y;
-            to_publish[6] = e.RightEye.Pupil.PupilDiameter;
-            to_publish[7] = (double)e.RightEye.GazePoint.Validity;
-            //to_publish[8] = e.DeviceTimeStamp;
-            // SystemTimeStamp and local_clock use the same clock but at different units
-            // Tobii system time is in microseconds
-            // lsl system time is in seconds
-            // there seem to be significant jitter in the lsl timestamps compared to the tobii
-            // might be due to unity? 
-            to_publish[8] = e.SystemTimeStamp;
-            to_publish[9] = liblsl.local_clock();
-
-            MLController.PublishExternal(mlOutletID, to_publish);
+                    to_publish[i, 0] = tmp.Left.GazePointOnDisplayArea.x;
+                    to_publish[i, 1] = tmp.Left.GazePointOnDisplayArea.x;
+                    to_publish[i, 2] = tmp.Left.PupilDiameter;
+                    to_publish[i, 3] = tmp.Left.GazePointValid ? 1.0 : 0.0;
+                    to_publish[i, 4] = tmp.Right.GazePointOnDisplayArea.x;
+                    to_publish[i, 5] = tmp.Right.GazePointOnDisplayArea.x;
+                    to_publish[i, 6] = tmp.Right.PupilDiameter;
+                    to_publish[i, 7] = tmp.Left.GazePointValid ? 1.0 : 0.0;
+                    // SystemTimeStamp and local_clock use the same clock but at different units
+                    // Tobii system time is in microseconds
+                    // lsl system time is in seconds
+                    // there seem to be significant jitter in the lsl timestamps compared to the tobii
+                    // might be due to unity? 
+                    to_publish[i, 8] = tmp.TimeStamp;
+                    to_publish[i, 9] = liblsl.local_clock();
+                }
+                MLController.PublishExternal(mlOutletID, to_publish);
+            }
         }
     }
 
     private void Update()
     {
-        if (tobiiTracker != null)
+        if (EyeTracker.Instance.Connected)
         {
-            if (mlOutletID != -1)
-            {
-                gazeProcess.ProcessGaze(_eyePix, out float[] gazeTargets, out float[] gazeCounts, out Vector3[] hitPoints);
-                gazeView.ShowGaze(hitPoints);
-                EventsController.instance.SendEyeLateUpdateEvent(_eyeADCS, gazeTargets, gazeCounts);
-            }
-            else
-            {
+            if (mlOutletID == -1)
                 ConfigureOulet();
-            }
+
+            Ray gazeRay = EyeTracker.Instance.LatestGazeData.CombinedGazeRayScreen;
+
         }
-        else
-        {
-            FindTracker();
-        }
+        
     }
 }
