@@ -21,8 +21,7 @@ public class PlaybackExpController : ExperimentController
         EventsController.OnPlaybackStart += StartPlayback;
         EventsController.OnEyeCalibrationUpdate += UpdateEyeCalibration; 
     }
-        
-    public PlaybackController pbCtrl;
+
     public Text txt_Targets;
 
     private bool playTrialData = false;
@@ -49,7 +48,7 @@ public class PlaybackExpController : ExperimentController
     private void StartPlayback()
     {
         playTrialData = true;
-        pbCtrl.ManageFileRecording(true);
+        EventsController.instance.SendManagePlaybackRecording(true);
         Debug.Log("Starting playback");
     }
 
@@ -70,6 +69,7 @@ public class PlaybackExpController : ExperimentController
     {
         _currentTrial.Trial_Number = parameters.Trial_Number;
         _currentTrial.Start_Position = parameters.Start_Position;
+        _currentTrial.Start_Rotation = parameters.Start_Rotation;
 
         _currentTrial.Cue_Objects = FindInTaskInfo(taskInfo.CueObjects, parameters.Cue_Objects);
         _currentTrial.Target_Objects = FindInTaskInfo(taskInfo.TargetObjects, parameters.Target_Objects);
@@ -235,8 +235,8 @@ public class PlaybackExpController : ExperimentController
         else if (playTrialData && frames.Count < 1)
         {
             playTrialData = false;
-            pbCtrl.ManageFileRecording(false);
-            pbCtrl.PublishTrial("Done");
+            EventsController.instance.SendManagePlaybackRecording(false);
+            EventsController.instance.SendPlaybackPublishTrial("Done");
         }
         else
         {

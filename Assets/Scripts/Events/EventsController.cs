@@ -108,6 +108,21 @@ public class EventsController : MonoBehaviour
     {
         OnResume?.Invoke();
     }
+
+    public delegate void ManagePlaybackRecording(bool OnOff);
+    public static event ManagePlaybackRecording OnManagePlaybackRecording;
+    public void SendManagePlaybackRecording(bool OnOff)
+    {
+        OnManagePlaybackRecording?.Invoke(OnOff);
+    }
+
+    public delegate void PlaybackPublishTrial(string message);
+    public static event PlaybackPublishTrial OnPlaybackPublishTrial;
+    public void SendPlaybackPublishTrial(string message)
+    {
+        OnPlaybackPublishTrial?.Invoke(message);
+    }
+
     #endregion Events
 
     // MonkeyLogic publish events
@@ -125,4 +140,10 @@ public class EventsController : MonoBehaviour
         OnPublishTrial?.Invoke(to_publish);
     }
 
+    public delegate void PublishTobii(double[,] to_publish);
+    public static event PublishTobii OnPublishTobii;
+    public void SendPublishTobii(double[,] to_publish)
+    {
+        OnPublishTobii?.Invoke(to_publish);
+    }
 }

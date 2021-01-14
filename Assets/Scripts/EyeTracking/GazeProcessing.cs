@@ -14,9 +14,10 @@ public class GazeProcessing : MonoBehaviour
     private float _foveation_radius_deg = 2.0f; // In DVA
     private float _foveation_radius_pix_x; // in pixels
     private float _foveation_radius_pix_y;
-    private float _x_res;
-    private float _y_res;
-    
+
+    private int _ml_x_res = 1920;
+    private int _ml_y_res = 1080;
+
     private Vector3[] _rays = new Vector3[33];
 
     private Camera cam;
@@ -26,7 +27,6 @@ public class GazeProcessing : MonoBehaviour
     {
         // Get screen resolution
         cam = Camera.main;
-    
     }
 
     private void GenerateRays()
@@ -58,30 +58,41 @@ public class GazeProcessing : MonoBehaviour
                 { 
                     modif = 0;
                 }
-                _rays[idx].x = _foveation_radius_pix_x* radii[rad] * Mathf.Sin((angles[ang] / Mathf.Rad2Deg) + modif);
-                _rays[idx].y = _foveation_radius_pix_y* radii[rad] * Mathf.Cos((angles[ang] / Mathf.Rad2Deg) + modif);
+                _rays[idx].x = _foveation_radius_pix_x * radii[rad] * Mathf.Sin((angles[ang] / Mathf.Rad2Deg) + modif);
+                _rays[idx].y = _foveation_radius_pix_y * radii[rad] * Mathf.Cos((angles[ang] / Mathf.Rad2Deg) + modif);
                 _rays[idx].z = 0f;
                 idx++;
             }
         }
     }
 
+    public void SetGazeWindow(float windowSize)
+    {
+        _foveation_radius_deg = windowSize;
+        ComputeFoveationWindowPixels();
+        GenerateRays();
+    }
+
+    private void ComputeFoveationWindowPixels()
+    {
+        // Just in case there is stretching of the image, wrong aspect ration or a difference in 
+        // resolution between the calibration and Unity. 
+        _foveation_radius_pix_x = _foveation_radius_deg * (_pix_per_deg * ExperimentConfiguration.ResolutionX / _ml_x_res);
+        _foveation_radius_pix_y = _foveation_radius_deg * (_pix_per_deg * ExperimentConfiguration.ResolutionY / _ml_y_res);
+    }
+
     // Response to event from MonkeyLogicController forwarding the eye calibration values from 
     // Monkeylogic. 
     public void UpdateCalibration(EyeCalibrationParameters parameters)
     {
-        _x_res = FullScreenView.ResolutionX;
-        _y_res = FullScreenView.ResolutionY;
-        
-        if (_x_res != parameters.ml_x_res || _y_res != parameters.ml_y_res)
+        if (ExperimentConfiguration.ResolutionX != parameters.ml_x_res || ExperimentConfiguration.ResolutionY != parameters.ml_y_res)
             Debug.LogWarning("MonkeyLogic and Unity resolutions differ. Is this normal?");
 
-        // Just in case there is stretching of the image, wrong aspect ration or a difference in 
-        // resolution between the calibration and Unity. 
+        _ml_x_res = parameters.ml_x_res;
+        _ml_y_res = parameters.ml_y_res;
         _pix_per_deg = parameters.pix_per_deg;
-        _foveation_radius_pix_x = _foveation_radius_deg * (_pix_per_deg * _x_res / parameters.ml_x_res);
-        _foveation_radius_pix_y = _foveation_radius_deg * (_pix_per_deg * _y_res / parameters.ml_y_res);
 
+        ComputeFoveationWindowPixels();
         GenerateRays();
     }
 
@@ -90,8 +101,6 @@ public class GazeProcessing : MonoBehaviour
     // in the environment. 
     public void ProcessGaze(Vector2 eyePix, out float[] targets, out float[] counts, out Vector3[] hitPoints)
     {
-        _x_res = FullScreenView.ResolutionX;
-        _y_res = FullScreenView.ResolutionY;
         Dictionary<int, int> gazeDict = new Dictionary<int, int>();
 
         // at this point the eyePix data assumes that the viewport resolution is 1920x1080
@@ -102,15 +111,15 @@ public class GazeProcessing : MonoBehaviour
         // Compute the gaze position on screen at the start and end of the view frustum
         Vector3 ptOrig = new Vector3
         {
-            x = eyePix.x / _x_res * cam.scaledPixelWidth,
-            y = eyePix.y / _y_res * cam.scaledPixelHeight,
+            x = eyePix.x / ExperimentConfiguration.ResolutionX * cam.scaledPixelWidth,
+            y = eyePix.y / ExperimentConfiguration.ResolutionY * cam.scaledPixelHeight,
             z = cam.nearClipPlane
         };
         //  (eyePix.x, eyePix.y, cam.nearClipPlane);
         Vector3 ptEnd = new Vector3
         {
-            x = eyePix.x / _x_res * cam.scaledPixelWidth,
-            y = eyePix.y / _y_res * cam.scaledPixelHeight,
+            x = eyePix.x / ExperimentConfiguration.ResolutionX * cam.scaledPixelWidth,
+            y = eyePix.y / ExperimentConfiguration.ResolutionY * cam.scaledPixelHeight,
             z = cam.farClipPlane
         };// (eyePix.x, eyePix.y, cam.farClipPlane);
 
@@ -125,8 +134,8 @@ public class GazeProcessing : MonoBehaviour
         // Culling mask of 0 is when the player is on black, no gaze then
         if (cam.cullingMask != 0) 
         {
-            float rXMod = cam.scaledPixelWidth / _x_res;
-            float rYMod = cam.scaledPixelHeight / _y_res;
+            float rXMod = cam.scaledPixelWidth / ExperimentConfiguration.ResolutionX;
+            float rYMod = cam.scaledPixelHeight / ExperimentConfiguration.ResolutionY;
 
             // Loop through all the rays and compute hits
             foreach (Vector3 r in _rays)

@@ -4,12 +4,6 @@ using LSL;
 
 public class MonkeyLogicOutlet : MonoBehaviour
 {
-    // Outlets settings
-    public string StreamName;
-    public string StreamType;
-    public string UniqueID;
-    public int ChannelCount;
-
     private List<liblsl.StreamOutlet> _outlets = new List<liblsl.StreamOutlet>();
     private List<liblsl.StreamInfo> _lslStreamInfos = new List<liblsl.StreamInfo>();
     private List<string> _outletsName = new List<string>(); 
@@ -23,10 +17,6 @@ public class MonkeyLogicOutlet : MonoBehaviour
                     liblsl.channel_format_t format, string unique_id, IDictionary<string, 
                         IDictionary<string, int>> metadata_dicts_names)
     {
-        StreamName = name;
-        StreamType = type;
-        UniqueID = unique_id;
-        ChannelCount = chan_count;
         int idx;
 
         if (_outletsName.IndexOf(name) == -1)

@@ -8,6 +8,9 @@ using UnityEditor;
 
 public class PlaybackRecorder : MonoBehaviour
 {
+    public int OutputResolutionX;
+    public int OutputResolutionY;
+
     private RecorderControllerSettings recctrl_sett;
     private RecorderController rec_ctrl;
     private RecorderSettings rec_sett;
@@ -21,20 +24,7 @@ public class PlaybackRecorder : MonoBehaviour
         rec_ctrl = new RecorderController(recctrl_sett);
 
         mov_sett = ScriptableObject.CreateInstance<MovieRecorderSettings>();
-        mov_sett.name = "My Video Recorder";
-        mov_sett.Enabled = true;
-        mov_sett.VideoBitRateMode = VideoBitrateMode.High;
-        mov_sett.FrameRatePlayback = FrameRatePlayback.Variable;
-        mov_sett.ImageInputSettings = new GameViewInputSettings
-        {
-            OutputWidth = FullScreenView.ResolutionX,
-            OutputHeight = FullScreenView.ResolutionY
-        };
-        mov_sett.OutputFormat = 0;
-        mov_sett.AudioInputSettings.PreserveAudio = true;
-        mov_sett.OutputFile = "RecordedTrial_<Trial>";
-        mov_sett.FileNameGenerator.AddWildcard("<Trial>", IncrementTrial);
-        recctrl_sett.AddRecorderSettings(mov_sett);
+       
     }
 
     string IncrementTrial(RecordingSession sess)
@@ -52,9 +42,25 @@ public class PlaybackRecorder : MonoBehaviour
         recctrl_sett.SetRecordModeToFrameInterval(0, frame);
     }
 
-    public void SetOutputFile(string name)
+    public void Configure(string name, int resx, int resy)
     {
+        
+        mov_sett.name = "MonkeyLogic Trial Recorder";
+        mov_sett.Enabled = true;
+        mov_sett.VideoBitRateMode = VideoBitrateMode.High;
+        mov_sett.FrameRatePlayback = FrameRatePlayback.Variable;
+
+        mov_sett.ImageInputSettings = new GameViewInputSettings
+        {
+            OutputWidth = resx,
+            OutputHeight = resy
+        };
+        mov_sett.OutputFormat = 0;
+        mov_sett.AudioInputSettings.PreserveAudio = true;
         mov_sett.OutputFile = name + "_<Trial>";
+        mov_sett.FileNameGenerator.AddWildcard("<Trial>", IncrementTrial);
+
+        recctrl_sett.AddRecorderSettings(mov_sett);
     }
 
     public void StartRecording()

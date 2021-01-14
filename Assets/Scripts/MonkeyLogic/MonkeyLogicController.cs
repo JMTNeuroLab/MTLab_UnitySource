@@ -39,6 +39,11 @@ public class MonkeyLogicController : MonoBehaviour
     private string _trialOutletName = "ML_TrialData";
     private string _trialOutletType = "Markers";
     private string _trialOutletID = "trial1214";
+    
+    private int tobiiOutlet;
+    private string _tobiiOutletName = "Tobii_GazeData";
+    private string _tobiiOutletType = "EyeData";
+    private string _tobiiOutletID = "tobii1214";
 
     // Inlets
     private MonkeyLogicInlet inlet;
@@ -81,6 +86,14 @@ public class MonkeyLogicController : MonoBehaviour
                                 _trialOutletID,
                                 GenerateXMLMetaData());
 
+        tobiiOutlet = outlets.Configure(_tobiiOutletName,
+                                _tobiiOutletType,
+                                10,
+                                liblsl.IRREGULAR_RATE,
+                                liblsl.channel_format_t.cf_double64,
+                                _tobiiOutletID,
+                                new Dictionary<string, IDictionary<string, int>>());
+
         inlet.Configure(_controlInletName, _controlInletType, _controlInletID, _resolver);
 
         // add listener for Streams delegates
@@ -89,6 +102,7 @@ public class MonkeyLogicController : MonoBehaviour
 
         EventsController.OnPublishFrame += PublishFrame;
         EventsController.OnPublishTrial += PublishTrial;
+        EventsController.OnPublishTobii += PublishTobii;
 
     }
     private IDictionary<string, IDictionary<string, int>> GenerateXMLMetaData()
@@ -153,6 +167,11 @@ public class MonkeyLogicController : MonoBehaviour
     public void PublishTrial(string to_publish)
     {
         outlets.Write(trialOutlet, to_publish);
+    }
+
+    public void PublishTobii(double[,] to_publish)
+    {
+        outlets.Write(tobiiOutlet, to_publish);
     }
 
     // To add outlets controlled by other classes

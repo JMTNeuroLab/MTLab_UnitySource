@@ -36,9 +36,6 @@ namespace FirstPerson
         // Misc
         private CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
-
-        // Set from the editor
-        public UserInputController inputCtrl;
         
         // Save the input data used to compute movement during each frame. To be
         // sent during LateUpdate to the MonkeyLogicController. 
@@ -63,24 +60,20 @@ namespace FirstPerson
 
         private void Update()
         {
-
             // Manual On Black
             if (Keyboard.current.vKey.wasPressedThisFrame)
                 OnBlack(false);
             if (Keyboard.current.bKey.wasPressedThisFrame)
                 OnBlack(true);
-            Vector2 move = inputCtrl.ReadAxes();
+
+            // Static function, no need for Instance reference
+            Vector2 move = UserInputController.ReadAxes();
 
             if (m_CanMove)
             {
-                
-                // set the desired speed to be walking or running
-                //speed = m_WalkSpeed * inputCtrl.Move_Sensitivity;
-
                 if (m_CharacterController.isGrounded)
                 {
                     // Read input
-                    //_vInput = Input.GetAxis(inputCtrl.InputV);
                     if (!m_CanBack && move.y < 0)
                     {
                         m_MoveDirection = new Vector3(0, 0, 0);
@@ -105,9 +98,9 @@ namespace FirstPerson
 
                 // Copied from MouseLook.LookRotation
                 // No pitch rotation either. 
-                //_hInput = Input.GetAxis(inputCtrl.InputH);
                 if (m_CanTurn)
-                    transform.localRotation *= Quaternion.Euler(0f, move.x * inputCtrl.Turn_Sensitivity, 0f);
+                    transform.localRotation *= Quaternion.Euler(0f, move.x, 0f);
+                    //transform.localRotation *= Quaternion.Euler(0f, move.x * inputCtrl.Turn_Sensitivity, 0f);
             }
             // Update values to experiment controller
             if (EventsController.instance != null)

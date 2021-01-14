@@ -198,6 +198,7 @@ public class PlaybackTrialParameters
 {
     public int Trial_Number;
     public Vector3 Start_Position;
+    public Vector3 Start_Rotation;
     public string[] Cue_Objects;
     public string Cue_Material;
     public string[] Target_Objects;

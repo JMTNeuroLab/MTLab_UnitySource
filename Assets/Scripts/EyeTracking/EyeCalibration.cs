@@ -6,9 +6,7 @@ using UnityEngine;
 public class EyeCalibration : MonoBehaviour
 {
     private EyeCalibrationParameters _eyecal_params;
-    private int _x_res;
-    private int _y_res;
-
+    
     // Read-only
     private bool _has_calibration = false;
     public bool has_calibration
@@ -21,9 +19,6 @@ public class EyeCalibration : MonoBehaviour
     public void UpdateCalibration(EyeCalibrationParameters parameters)
     {
         _eyecal_params = parameters;
-        
-        _x_res = FullScreenView.ResolutionX;
-        _y_res = FullScreenView.ResolutionY;
         _has_calibration = true;
     }
 
@@ -38,14 +33,14 @@ public class EyeCalibration : MonoBehaviour
         
         Vector2 eye_pix = new Vector2
         {
-            x = in_eye.x * (_x_res / _eyecal_params.ml_x_res) * _x_res,
-            y = (1.0f - in_eye.y) * (_y_res / _eyecal_params.ml_y_res) * _y_res
+            x = in_eye.x * ExperimentConfiguration.ResolutionX,
+            y = (1.0f - in_eye.y) * ExperimentConfiguration.ResolutionY
         };
 
         // prevent values from falling outside of screen
-        if (eye_pix.x < 0 || eye_pix.x > _x_res || float.IsNaN(eye_pix.x))
+        if (eye_pix.x < 0 || eye_pix.x > ExperimentConfiguration.ResolutionX || float.IsNaN(eye_pix.x))
             eye_pix.x = -1;
-        if (eye_pix.y < 0 || eye_pix.y > _y_res || float.IsNaN(eye_pix.y))
+        if (eye_pix.y < 0 || eye_pix.y > ExperimentConfiguration.ResolutionY || float.IsNaN(eye_pix.y))
             eye_pix.y = -1;
 
         return eye_pix;
@@ -99,14 +94,14 @@ public class EyeCalibration : MonoBehaviour
         // need to make sure the screen resolutions match between ML and Unity
         eye_pix = new Vector2
         {
-            x = (eye_deg.x * (_eyecal_params.pix_per_deg * _x_res / _eyecal_params.ml_x_res)) + (0.5f * _x_res),
-            y = (eye_deg.y * (_eyecal_params.pix_per_deg * _y_res / _eyecal_params.ml_y_res)) + (0.5f * _y_res)
+            x = (eye_deg.x * (_eyecal_params.pix_per_deg * ExperimentConfiguration.ResolutionX / _eyecal_params.ml_x_res)) + (0.5f * ExperimentConfiguration.ResolutionX),
+            y = (eye_deg.y * (_eyecal_params.pix_per_deg * ExperimentConfiguration.ResolutionY / _eyecal_params.ml_y_res)) + (0.5f * ExperimentConfiguration.ResolutionY)
         };
 
         // prevent values from falling outside of screen
-        if (eye_pix.x < 0 || eye_pix.x > _x_res)
+        if (eye_pix.x < 0 || eye_pix.x > ExperimentConfiguration.ResolutionX)
             eye_pix.x = -1;
-        if (eye_pix.y < 0 || eye_pix.y > _y_res)
+        if (eye_pix.y < 0 || eye_pix.y > ExperimentConfiguration.ResolutionY)
             eye_pix.y = -1;
     }
 

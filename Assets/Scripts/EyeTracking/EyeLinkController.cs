@@ -95,48 +95,29 @@ public class EyeLinkChecker
 
 }
 
-public class EyeLinkController : MonoBehaviour
+public class EyeLinkController : EyeControllerBase
 {
-    private Vector2 _eyeRaw = new Vector2();
-    private Vector2 _eyeDeg = new Vector2();
-    private Vector2 _eyePix = new Vector2();
-    private float[] _gazeTargets;
-    private float[] _gazeCounts;
-    
+
     // Eye Link settings
     private EL_EYE el_Eye = EL_EYE.EL_EYE_NONE;
     private EyeLinkUtil el_Util;
     private EyeLink el;
-        
-    // Calibration script
-    private EyeCalibration eyecal;
-
-    // Gaze 
-    private GazeProcessing gazeProcess;
-    private GazeView gazeView;
-
+   
     private EyeLinkChecker checker;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        eyecal = gameObject.AddComponent<EyeCalibration>();
-        gazeProcess = gameObject.AddComponent<GazeProcessing>();
-        gazeView = gameObject.AddComponent<GazeView>();
+        Initialize();
 
         el = new EyeLink();
         el_Util = new EyeLinkUtil();
         checker = new EyeLinkChecker();
-
-        // Add Listeners
-        EventsController.OnEyeCalibrationUpdate += gazeProcess.UpdateCalibration;
-        EventsController.OnEyeCalibrationUpdate += eyecal.UpdateCalibration;
     }
 
     private void OnDisable()
     {
-        EventsController.OnEyeCalibrationUpdate -= gazeProcess.UpdateCalibration;
-        EventsController.OnEyeCalibrationUpdate -= eyecal.UpdateCalibration;
+        Disable();
 
         if (checker != null)
         {
@@ -223,12 +204,9 @@ public class EyeLinkController : MonoBehaviour
 
                 eyecal.EL_RawToPix(_eyeRaw, out _eyeDeg, out _eyePix);
                 
-                gazeProcess.ProcessGaze(_eyePix, out float[] gazeTargets, out float[] gazeCounts, out Vector3[] hitPoints);
-                gazeView.ShowGaze(hitPoints);
+                gazeProcess.ProcessGaze(_eyePix, out _gazeTargets, out _gazeCounts, out _gazeHits);
+                gazeView.ShowGaze(_gazeHits);
 
-                _gazeTargets = gazeTargets;
-                _gazeCounts = gazeCounts;
-                
                 lastSampleTime = s.time;
             }
             else
@@ -245,7 +223,6 @@ public class EyeLinkController : MonoBehaviour
         el.stopRecording();
         el.closeDataFile();
         el.close();
-            
     }
     
 }

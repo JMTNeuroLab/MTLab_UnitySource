@@ -28,13 +28,8 @@ using Misc;
 
 public class PlaybackController : MonoBehaviour
 {
-    // Video recording of trial
-    public string TaskName = "XMaze";
-    public string MonkeyName = "Monkey";
-    public string Date = "00-00";
-    public bool RecordToFile = true;
-
     private PlaybackRecorder pb_rec;
+    private bool recordToFile; 
 
     // Inlets
     private MonkeyLogicInlet _trialInlet;
@@ -59,13 +54,16 @@ public class PlaybackController : MonoBehaviour
             return; // LSL crashes OSX           
         }
 
+    }
+
+    public void Configure(string task, string monkey, string date, int resx, int resy, bool record)
+    {
         // These need to be MonoBehavior so leave unchanged
         _resolver = gameObject.AddComponent<MonkeyLogicResolver>();
         _trialInlet = gameObject.AddComponent<MonkeyLogicInlet>();
         outlets = gameObject.AddComponent<MonkeyLogicOutlet>();
 
         // Configure
-
         _trialInlet.Configure(_trialInletName, _trialInletType, _trialInletID, _resolver);
 
         trialOutlet = outlets.Configure(_trialOutletName,
@@ -84,13 +82,17 @@ public class PlaybackController : MonoBehaviour
 
         // Create playback recorder instance
         pb_rec = gameObject.AddComponent<PlaybackRecorder>();
-        pb_rec.SetOutputFile(TaskName + "_" + MonkeyName + "_" + Date);
+        pb_rec.Configure(task + "_" + monkey + "_" + date, resx, resy);
+        
+        recordToFile = record;
 
+        EventsController.OnManagePlaybackRecording += ManageFileRecording;
+        EventsController.OnPlaybackPublishTrial += PublishTrial;
     }
 
     public void ManageFileRecording(bool OnOff)
     {
-        if (OnOff)
+        if (OnOff && recordToFile)
             pb_rec.StartRecording();
         else
             pb_rec.StopRecording();

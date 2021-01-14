@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Tobii.Research;
+﻿using UnityEngine;
 using Tobii.Research.Unity;
 using LSL;
 
@@ -10,66 +7,42 @@ using LSL;
 // Active display coordinate system: origin (0,0) is Top-Left, (1,1) is Bottom-Right
 // Unity viewport coordinates: origin is Bottom-Left, (1,1) is Top-Right
 
-public class TobiiController : MonoBehaviour
+public class TobiiController : EyeControllerBase
 {
-    public enum TrackedEye
+
+    // Start is called before the first frame update
+    void Awake()
     {
-        Left, 
-        Right
-    }
-
-    public enum SamplingRates
-    {
-        _60 = 60,
-        _120 = 120,
-        _250 = 250
-    };
-
-    public SamplingRates SR = SamplingRates._60;
-
-    // We need the monkeylogic controller here to forward gaze data as soon as we have it
-    // for MonkeyLogic to record it. 
-    public MonkeyLogicController MLController;
-    protected int mlOutletID = -1;
-
-    // Calibration script
-    void Start()
-    {
-    }
-
-
-    private void ConfigureOulet()
-    {
-        // Data sent to stream: 
-        // Left eye: 
-        //    X in Active Display Coordinate System (normalized 0-1)
-        //    Y in Active Display Coordinate System (normalized 0-1)
-        //    Pupil Size
-        //    Validity
-        // Right eye: 
-        //    X in Active Display Coordinate System (normalized 0-1)
-        //    Y in Active Display Coordinate System (normalized 0-1)
-        //    Pupil Size
-        //    Validity
-        // System Time: Computer clock time in useconds
-        // LSL time: computer clock time in seconds
-        mlOutletID = MLController.AddExternalOutlet("TobiiGazeData", "TobiiGazeData", 10, liblsl.IRREGULAR_RATE, "tobii1214");
+        Initialize();
     }
 
     // Unity fixed update is by default @ 20 ms or 50 Hz. Since the tracker operates at either 60, 120 or 250 Hz,
     // we would have at most 5 samples to process, which should not affect frame rates. Timing is somewhat reliable.
+    // Data sent to stream: 
+    // Left eye: 
+    //    X in Active Display Coordinate System (normalized 0-1)
+    //    Y in Active Display Coordinate System (normalized 0-1)
+    //    Pupil Size
+    //    Validity
+    // Right eye: 
+    //    X in Active Display Coordinate System (normalized 0-1)
+    //    Y in Active Display Coordinate System (normalized 0-1)
+    //    Pupil Size
+    //    Validity
+    // System Time: Computer clock time in useconds
+    // LSL time: computer clock time in seconds
     private void FixedUpdate()
     {
-        if (EyeTracker.Instance.Connected && mlOutletID != -1)
+        if (TobiiEyeTracker.Instance.Connected)
         {
-            int n_samples = EyeTracker.Instance.GazeDataCount;
+            int n_samples = TobiiEyeTracker.Instance.GazeDataCount;
             if (n_samples > 0)
             {
                 // 
                 double[,] to_publish = new double[n_samples, 10];
                 for (int i = 0; i < n_samples; i++)
                 {
-                    IGazeData tmp = EyeTracker.Instance.NextData;
+                    IGazeData tmp = TobiiEyeTracker.Instance.NextData;
 
                     to_publish[i, 0] = tmp.Left.GazePointOnDisplayArea.x;
                     to_publish[i, 1] = tmp.Left.GazePointOnDisplayArea.x;
@@ -87,21 +60,32 @@ public class TobiiController : MonoBehaviour
                     to_publish[i, 8] = tmp.TimeStamp;
                     to_publish[i, 9] = liblsl.local_clock();
                 }
-                MLController.PublishExternal(mlOutletID, to_publish);
+                EventsController.instance.SendPublishTobii(to_publish);
             }
         }
     }
 
     private void Update()
     {
-        if (EyeTracker.Instance.Connected)
+        if (TobiiEyeTracker.Instance.Connected)
         {
-            if (mlOutletID == -1)
-                ConfigureOulet();
+            IGazeData gd = TobiiEyeTracker.Instance.LatestGazeData;
 
-            Ray gazeRay = EyeTracker.Instance.LatestGazeData.CombinedGazeRayScreen;
+            // Based on GazeData.cs lines 17-30
+            if (gd.Left.GazePointValid && gd.Right.GazePointValid)
+            {
+                Vector2 combinedPoint = (gd.Left.GazePointOnDisplayArea + gd.Right.GazePointOnDisplayArea) / 2f;
+                // Based on screen values received from monkey logic. Creates a ~2 DVA radius foveation circle based on
+                // the screen size and approximate distance entered in MonkeyLogic. 
+                _eyePix = eyecal.T_ADCSToPix(combinedPoint);
+
+                gazeProcess.ProcessGaze(_eyePix, out _gazeTargets, out _gazeCounts, out _gazeHits);
+                gazeView.ShowGaze(_gazeHits);
+
+                EventsController.instance.SendEyeLateUpdateEvent(combinedPoint, _gazeTargets, _gazeCounts);
+            }
 
         }
-        
+
     }
 }
