@@ -5,8 +5,6 @@ using UnityEditor;
 
 public class FullScreenView : MonoBehaviour
 {
-    public bool AutoLaunch; 
-
     // FullScreen Game Window
     private EditorWindow win;
 

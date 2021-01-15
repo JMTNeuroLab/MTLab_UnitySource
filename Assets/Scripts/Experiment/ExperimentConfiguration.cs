@@ -62,7 +62,7 @@ public class ExperimentConfiguration : MonoBehaviour
     public static int XOffset;
     // The menu bar is exactly 21 pixels in height
     public static int MenuOffset;
-    
+    public static EyeTrackers Eye_Tracker; 
     #endregion Static Variables
 
     #region Private Variables
@@ -126,6 +126,8 @@ public class ExperimentConfiguration : MonoBehaviour
         ResolutionY = SetScreenHeight;
         XOffset = SetScreenOffset;
         MenuOffset = SetMenuBarHeight;
+
+        Eye_Tracker = SetEyeTracker;
 
         // The camera FOV value is for the Vertical FOV, convert to Horizontal
         if (Camera.main != null)

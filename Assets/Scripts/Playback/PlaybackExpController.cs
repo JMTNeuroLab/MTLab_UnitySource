@@ -163,12 +163,32 @@ public class PlaybackExpController : ExperimentController
             Camera.main.transform.position = new Vector3 { x = (float)tmp[0], y = (float)(tmp[1] + 0.8), z = (float)tmp[2] };
             Camera.main.transform.rotation = Quaternion.Euler(0f, (float)tmp[3], 0f);
             // TODO Trialstate and gaze
-            float x = (float)tmp[4];
-            float y = (float)tmp[5];
-            x = (pix_per_deg * x) + (0.5f * XRes);
-            y = (pix_per_deg * y) + (0.5f * YRes);
+            Vector2 _eyePix;
+            switch (ExperimentConfiguration.Eye_Tracker)
+            {
+                case ExperimentConfiguration.EyeTrackers.EyeLink:
+                    // gaze data is in degrees
+                    _eyePix = new Vector2
+                    {
+                        x = (pix_per_deg * (float)tmp[4]) + (0.5f * XRes),
+                        y = (pix_per_deg * (float)tmp[5]) + (0.5f * YRes)
+                    };
+                    break;
 
-            Vector2 _eyePix = new Vector2 { x = x, y = y };
+                case ExperimentConfiguration.EyeTrackers.TobiiProFusion:
+                    // gaze data is in relative screen position
+                    _eyePix = new Vector2
+                    {
+                        x = (float)tmp[4] * XRes,
+                        y = (1f - (float)tmp[5]) * YRes
+                    };
+                    break;
+
+                default:
+                    _eyePix = Vector2.negativeInfinity;
+                    break;
+
+            }
             
             // manually convert to pixels
             gp.ProcessGaze(_eyePix, out float[] gazeTargets, out float[] gazeCounts, out Vector3[] hitPoints);
