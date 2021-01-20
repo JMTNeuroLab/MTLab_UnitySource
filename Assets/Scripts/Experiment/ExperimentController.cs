@@ -782,9 +782,21 @@ public virtual void PrepareTrial()
         if (currentState == StateNames.ITI)
         {
             if (_previousTrialError == 1)
-                _stateTimer += taskInfo.ErrorPenalty;
+                stateDuration += taskInfo.ErrorPenalty;
             if (_previousTrialError == 2)
-                _stateTimer += taskInfo.IgnorePenalty;
+                stateDuration += taskInfo.IgnorePenalty;
+        }
+    }
+
+    // This is used to pause the ITI if the subject pushes on the joystick
+    public void JoystickBlock()
+    {
+        if (Mathf.Abs(_frameData.JoystickPosition.x) > 0.1f || Mathf.Abs(_frameData.JoystickPosition.y) > 0.1)
+            _stateTimer = Mathf.Infinity;
+        else
+        {
+            if (_stateTimer == Mathf.Infinity)
+                _stateTimer = Time.realtimeSinceStartup;
         }
     }
 
