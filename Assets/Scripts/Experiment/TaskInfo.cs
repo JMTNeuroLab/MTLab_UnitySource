@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Misc;
 
 public abstract class TaskInfo : MonoBehaviour
 {
@@ -53,7 +54,8 @@ public abstract class TaskInfo : MonoBehaviour
 
     public int NTargets = 1;
     [Tooltip("Set to 0 to not use Distractors")] public int NDistractors = 1;
-    [Tooltip("If multiple targets need to be collected to complete trials.")] public bool MultipleTargets;
+    [Tooltip("If multiple targets need to be collected to complete trials. If false, trial will end as soon as a single target is hit.")] public bool MultipleTargets;
+    [Tooltip("Scale of MonkeyLogic reward for intermediate targets")] public MultipleRewardMultiplier MultipleRewardsScale;
 
     [Header("Conditions")]
     public Condition[] Conditions;

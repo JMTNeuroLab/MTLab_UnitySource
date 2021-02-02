@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Misc;
 
 public class TrialData
 {
@@ -19,6 +20,7 @@ public class TrialData
     public Material Cue_Material;
 
     public bool MultipleTargets;
+    public MultipleRewardMultiplier MultipleRewardsScale;
 
     public GameObject[] Target_Objects;
 

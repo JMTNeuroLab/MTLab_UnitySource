@@ -197,6 +197,7 @@ public abstract class ExperimentController : MonoBehaviour
                                                 Target_Materials = targ_mat,
                                                 Target_Positions = targ_pos.ToArray(),
                                                 MultipleTargets = taskInfo.MultipleTargets,
+                                                MultipleRewardsScale = taskInfo.MultipleRewardsScale,
 
                                                 //Distractors
                                                 Distractor_Objects = dists,
@@ -609,6 +610,7 @@ public virtual void PrepareTrial()
     // End of trial
     protected bool TrialEnded = false;
     protected string Outcome = "";
+    protected bool WasATargetHit = false; 
 
     public virtual void EndTrial()
     {
@@ -649,11 +651,20 @@ public virtual void PrepareTrial()
                     // need to hide the target that was hit
                     _currentTrial.Target_Objects[i].GetComponent<Renderer>().enabled = false;
                     _currentTrial.Target_Objects[i].GetComponent<Collider>().enabled = false;
+
+                    // Since the colliders are turned off on the fly, the exit collision is not registering properly
+                    // we need to manually clear the player collision status
+                    playerController.ClearCollisionStatus();
+                    
+                    // Send the player state as a reward state when multiple targets are configured. 
+                    WasATargetHit = true;
                 }
             }
             if( (_currentTrial.MultipleTargets && _trialTargetHits.All(x => x)) || (!_currentTrial.MultipleTargets && _trialTargetHits.Any(x => x)) )
             {
                 targ = true;
+                // Set WasATargetHit to false since it will trigger a Modified reward. We want the full end of trial reward
+                WasATargetHit = false; 
             }
 
             foreach (GameObject go in _currentTrial.Distractor_Objects)
@@ -896,8 +907,44 @@ public virtual void PrepareTrial()
 
             // Read data at the last minute to make sure every other controller has updated the values. 
             // Time information in defined in the _frameData.GetData() script; 
-            // Set current frame trial state; 
-            _frameData.Trial_State = currentState;
+            if (_currentTrial.MultipleTargets && WasATargetHit)
+            {
+                switch(_currentTrial.MultipleRewardsScale)
+                {
+                    case MultipleRewardMultiplier.Quarter:
+                        {
+                            _frameData.Trial_State = StateNames.QuarterReward;
+                            break;
+                        }
+                    case MultipleRewardMultiplier.Half:
+                        {
+                            _frameData.Trial_State = StateNames.HalfReward;
+                            break;
+                        }
+                    case MultipleRewardMultiplier.ThreeQuarter:
+                        {
+                            _frameData.Trial_State = StateNames.ThreeQuaurterReward;
+                            break;
+                        }
+                    case MultipleRewardMultiplier.Full:
+                        {
+                            _frameData.Trial_State = StateNames.FullReward;
+                            break;
+                        }
+                    default:
+                        {
+                            _frameData.Trial_State = currentState;
+                            break;
+                        }
+                }
+                WasATargetHit = false;
+            }
+            else
+            {
+                // Set current frame trial state; 
+                _frameData.Trial_State = currentState;
+            }
+
             EventsController.instance.SendPublishFrame(_frameData.GetData(liblsl.local_clock()));
             _frameData.Clear();
             yield return null;

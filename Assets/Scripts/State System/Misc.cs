@@ -21,7 +21,21 @@ namespace Misc
         Pause,
         Resume,
         Setup,
+        QuarterReward,
+        HalfReward,
+        ThreeQuaurterReward,
+        FullReward,
+        NoReward,
         Null
+    }
+
+    public enum MultipleRewardMultiplier
+    {
+        Quarter,
+        Half, 
+        ThreeQuarter,
+        Full, 
+        None
     }
 
     public class Misc
