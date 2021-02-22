@@ -9,6 +9,16 @@ public class UserInputController : MonoBehaviour
 
         switch(ExperimentConfiguration.InputDevice)
         {
+            case ExperimentConfiguration.UserInputDevice.GamePad:
+                if (Gamepad.current != null)
+                {
+                    axes = Gamepad.current.leftStick.ReadValue();
+                }
+                else
+                {
+                    axes = Vector2.zero;
+                }
+                break;
             case ExperimentConfiguration.UserInputDevice.Joystick:
                 if (Joystick.current != null)
                 {

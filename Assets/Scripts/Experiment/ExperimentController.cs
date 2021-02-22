@@ -308,8 +308,6 @@ public abstract class ExperimentController : MonoBehaviour
         // Get Controllers instance
         playerController.OnBlack(true);
 
-        PrepareAllTrials();
-
         if (DebugMode)
             StartExperiment();
     }

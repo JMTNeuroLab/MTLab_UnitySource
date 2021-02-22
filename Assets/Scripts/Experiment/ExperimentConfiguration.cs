@@ -10,7 +10,8 @@ public class ExperimentConfiguration : MonoBehaviour
         Null,
         Joystick,
         Keyboard,
-        Mouse  // here mouse is for navigation (e.g. trackball); TODO: mouse for gaze?
+        Mouse, // here mouse is for navigation (e.g. trackball); TODO: mouse for gaze?
+        GamePad,
         // TODO: Touchpad
     }
 
