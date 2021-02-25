@@ -321,6 +321,13 @@ public abstract class ExperimentController : MonoBehaviour
         {
             string name = col.gameObject.name;
             int ID = col.gameObject.GetInstanceID();
+
+            // handle repeating materials
+            while (InstanceIDMap.ContainsKey(name))
+            {
+                name += "_";
+            }
+
             InstanceIDMap.Add(name, ID);
         }
 
@@ -332,9 +339,16 @@ public abstract class ExperimentController : MonoBehaviour
             {
                 string name = mat.name;
                 int ID = mat.GetInstanceID();
+
+                // handle repeating materials
+                while (InstanceIDMap.ContainsKey(name))
+                {
+                    name += "_";
+                }
                 InstanceIDMap.Add(name, ID);
             }
         }
+
 
     }
     protected int NameToID(string name)

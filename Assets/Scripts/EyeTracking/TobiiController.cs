@@ -45,11 +45,11 @@ public class TobiiController : EyeControllerBase
                     IGazeData tmp = TobiiEyeTracker.Instance.NextData;
 
                     to_publish[i, 0] = tmp.Left.GazePointOnDisplayArea.x;
-                    to_publish[i, 1] = tmp.Left.GazePointOnDisplayArea.x;
+                    to_publish[i, 1] = tmp.Left.GazePointOnDisplayArea.y;
                     to_publish[i, 2] = tmp.Left.PupilDiameter;
                     to_publish[i, 3] = tmp.Left.GazePointValid ? 1.0 : 0.0;
                     to_publish[i, 4] = tmp.Right.GazePointOnDisplayArea.x;
-                    to_publish[i, 5] = tmp.Right.GazePointOnDisplayArea.x;
+                    to_publish[i, 5] = tmp.Right.GazePointOnDisplayArea.y;
                     to_publish[i, 6] = tmp.Right.PupilDiameter;
                     to_publish[i, 7] = tmp.Left.GazePointValid ? 1.0 : 0.0;
                     // SystemTimeStamp and local_clock use the same clock but at different units
