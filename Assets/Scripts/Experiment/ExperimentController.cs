@@ -618,7 +618,9 @@ public virtual void PrepareTrial()
         playerController.Freeze(ON);
     }
 
-
+    protected string FeedbackString;
+    public virtual void ShowFeedback() { } 
+    
     // End of trial
     protected bool TrialEnded = false;
     protected string Outcome = "";
