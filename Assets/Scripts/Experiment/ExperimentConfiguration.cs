@@ -49,7 +49,7 @@ public class ExperimentConfiguration : MonoBehaviour
     public int SetScreenHeight = 1080;
     public int SetScreenOffset = 0;
     public int SetMenuBarHeight = 21;
-    public bool SetAutoLaunch = true;
+    public bool LaunchFullScreen = true;
     public float SetCameraFOV = 90;
 
     #endregion Public Variables
@@ -113,7 +113,7 @@ public class ExperimentConfiguration : MonoBehaviour
 
         // FullScreen window
         GameObject fsw = GenerateNestedGameObject("FullScreenView", new Type[] { typeof(FullScreenView) });
-        if (SetAutoLaunch)
+        if (LaunchFullScreen)
             fsw.GetComponent<FullScreenView>().LaunchView(ResolutionX, ResolutionY, MenuOffset,  XOffset);
     }
 
