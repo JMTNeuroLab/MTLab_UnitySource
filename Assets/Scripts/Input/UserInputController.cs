@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class UserInputController : MonoBehaviour
 {
+
     public static Vector2 ReadAxes()
     {
         Vector2 axes;

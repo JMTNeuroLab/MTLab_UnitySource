@@ -20,6 +20,7 @@ public class TrialData
     public Material Cue_Material;
 
     public bool MultipleTargets;
+
     public MultipleRewardMultiplier MultipleRewardsScale;
 
     public GameObject[] Target_Objects;
@@ -37,6 +38,14 @@ public class TrialData
     public string Outcome;
 
     public double Unity_Local_Time;
+
+    public Vector3[] Additional_Positions;
+
+    public float[] Additional_Floats;
+
+    public GameObject[] Additional_GameObjects;
+
+    public Material[] Additional_Materials;
 
     public string GetData(double curr_time)
     {
